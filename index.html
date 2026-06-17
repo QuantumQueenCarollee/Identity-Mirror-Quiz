@@ -577,7 +577,7 @@ const QUESTIONS = [
     ]
   },
   {
-    q: "When you think about your younger self — the child version of you — what do you most want to say to her?",
+    q: "When you think about your younger self — the child version of you — what do you most want to say to them?",
     opts: [
       "\"You didn't have to carry all of that alone\"",
       "\"You were enough. You were always enough.\"",
@@ -590,7 +590,7 @@ const QUESTIONS = [
     opts: [
       "Waking up — starting to question everything",
       "In the middle of a real transformation, even when it's hard",
-      "Becoming her. I can feel it.",
+      "Becoming my true self. I can feel it.",
       "Still stuck in the old story more than I want to admit"
     ]
   }
@@ -710,13 +710,13 @@ ${qaPairs.map((qa, i) => `Q${i+1}: "${qa.question}"\nA: "${qa.answer}"`).join('\
 
 Respond ONLY with a valid JSON object (no markdown, no backticks) with exactly these fields:
 {
-  "identity_name": "A poetic 3-5 word name for the current identity pattern they're living from (e.g. 'The Woman Who Waits', 'The Fierce Protector', 'The One Who Over-Gives')",
-  "what_i_see": "2-3 sentences. Deeply honest and compassionate reflection of the specific pattern visible in their answers. Name what you actually see without sugarcoating, but with love. Reference specific things from their answers.",
-  "where_it_came_from": "2-3 sentences. Where this identity likely came from — childhood programming, inherited beliefs, ancestral patterns. Help them see it wasn't their fault, but it has been their responsibility. Make it feel like a revelation, not a diagnosis.",
-  "what_its_costing_you": "2-3 sentences. What staying in this story is costing them — in joy, receiving, love, abundance, freedom. Be specific and real.",
-  "who_you_actually_are": "3-4 sentences. The truth of who they are underneath the programming. This should feel like someone finally seeing them fully. Use language of worthiness, power, and becoming. This is the most important section — make it land.",
-  "your_next_step": "1-2 sentences. One specific, grounded action or awareness to carry this week. Not overwhelming — just the next step.",
-  "carol_message": "1-2 sentences from Carol personally — something like 'I know this pattern intimately because I lived it.' Warm, real, human. Reference that Carol has a self-hypnosis session or video specifically for this pattern."
+  "identity_name": "A poetic 3-5 word name for the current identity pattern they're living from (e.g. 'The One Who Waits', 'The Fierce Protector', 'The One Who Over-Gives', 'The Silent Carrier'). Use gender-neutral language.",
+  "what_i_see": "2-3 sentences. Deeply honest and compassionate reflection of the specific pattern visible in their answers. Name what you actually see without sugarcoating, but with love. Reference specific things from their answers. Use gender-neutral language — they/them.",
+  "where_it_came_from": "2-3 sentences. Where this identity likely came from — childhood programming, inherited beliefs, ancestral patterns. Help them see it wasn't their fault, but it has been their responsibility. Make it feel like a revelation, not a diagnosis. Gender-neutral language.",
+  "what_its_costing_you": "2-3 sentences. What staying in this story is costing them — in joy, receiving, love, abundance, freedom. Be specific and real. Gender-neutral language.",
+  "who_you_actually_are": "3-4 sentences. The truth of who they are underneath the programming. This should feel like someone finally seeing them fully. Use language of worthiness, power, and becoming. Gender-neutral — avoid 'she/her/woman/him/his/man'. Use 'you', 'your', 'they'. This is the most important section — make it land.",
+  "your_next_step": "1-2 sentences. One specific, grounded action or awareness to carry this week. Not overwhelming — just the next step. Gender-neutral.",
+  "carol_message": "1-2 sentences from Carol personally — something like 'I know this pattern intimately because I lived it.' Warm, real, human. Reference that Carol has a self-hypnosis session or video specifically for this pattern. Gender-neutral when referring to the subscriber."
 }`;
 
   try {
