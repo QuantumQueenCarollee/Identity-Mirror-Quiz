@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Identity Mirror — Quantum Queen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+
+  :root {
+    --warm-dark: #1a1209;
+    --warm-mid: #2d1f0e;
+    --gold: #c9a96e;
+    --gold-light: #e8d5a8;
+    --dusty-rose: #c4907a;
+    --rose-pale: #f2e4dc;
+    --cream: #faf6ef;
+    --text-primary: #1a1209;
+    --text-soft: #5c4a35;
+    --text-muted: #8a7060;
+    --border: rgba(201,169,110,0.25);
+    --border-hover: rgba(201,169,110,0.6);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--warm-dark);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(201,169,110,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 80% 20%, rgba(196,144,122,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 50% at 50% 50%, rgba(45,31,14,0.9) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  .main-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(38px, 8vw, 58px);
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .main-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .subtitle {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    color: rgba(250,246,239,0.55);
+    letter-spacing: 0.04em;
+    margin-top: 16px;
+    line-height: 1.7;
+  }
+
+  .gold-line {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 24px auto;
+  }
+
+  /* Cards */
+  .card {
+    background: rgba(250,246,239,0.04);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    margin-bottom: 16px;
+    transition: border-color 0.3s;
+  }
+
+  /* Intro screen */
+  .intro-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 1.65;
+    color: rgba(250,246,239,0.85);
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .intro-text em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .start-btn {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.3s;
+  }
+
+  .start-btn:hover {
+    background: rgba(201,169,110,0.1);
+    border-color: var(--gold-light);
+  }
+
+  /* Progress */
+  .progress-wrap {
+    margin-bottom: 36px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+
+  .progress-count {
+    font-size: 11px;
+    color: rgba(250,246,239,0.35);
+    font-weight: 300;
+  }
+
+  .progress-bar {
+    height: 1px;
+    background: rgba(201,169,110,0.15);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--dusty-rose), var(--gold));
+    border-radius: 1px;
+    transition: width 0.5s ease;
+  }
+
+  /* Question */
+  .question-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold);
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+
+  .question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(20px, 4vw, 26px);
+    line-height: 1.4;
+    color: var(--cream);
+    margin-bottom: 32px;
+  }
+
+  /* Options */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    padding: 16px 20px;
+    background: rgba(250,246,239,0.03);
+    border: 1px solid rgba(201,169,110,0.18);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: left;
+    color: rgba(250,246,239,0.75);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    position: relative;
+  }
+
+  .option::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--gold);
+    opacity: 0;
+    transition: opacity 0.25s;
+    border-radius: 2px 0 0 2px;
+  }
+
+  .option:hover {
+    border-color: rgba(201,169,110,0.45);
+    color: var(--cream);
+    background: rgba(201,169,110,0.06);
+  }
+
+  .option:hover::before { opacity: 1; }
+
+  .option.selected {
+    border-color: var(--gold);
+    color: var(--gold-light);
+    background: rgba(201,169,110,0.1);
+  }
+
+  .option.selected::before { opacity: 1; }
+
+  /* Nav */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-btn {
+    padding: 12px 28px;
+    background: transparent;
+    border: 1px solid;
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.25s;
+  }
+
+  .btn-back {
+    border-color: rgba(201,169,110,0.25);
+    color: rgba(250,246,239,0.4);
+  }
+
+  .btn-back:hover {
+    border-color: rgba(201,169,110,0.4);
+    color: rgba(250,246,239,0.6);
+  }
+
+  .btn-next {
+    border-color: var(--gold);
+    color: var(--gold-light);
+    margin-left: auto;
+  }
+
+  .btn-next:hover:not(:disabled) {
+    background: rgba(201,169,110,0.12);
+  }
+
+  .btn-next:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Loading */
+  .loading {
+    text-align: center;
+    padding: 48px 0;
+  }
+
+  .candle-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .candle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .flame {
+    width: 8px;
+    height: 16px;
+    background: radial-gradient(ellipse at 50% 80%, #f9c74f, #f8961e, transparent);
+    border-radius: 50% 50% 20% 20%;
+    animation: flicker 1.2s ease-in-out infinite alternate;
+    margin-bottom: 2px;
+  }
+
+  .candle:nth-child(2) .flame { animation-delay: 0.4s; }
+  .candle:nth-child(3) .flame { animation-delay: 0.8s; }
+
+  @keyframes flicker {
+    0% { transform: scaleX(1) scaleY(1) rotate(-1deg); opacity: 0.9; }
+    100% { transform: scaleX(0.85) scaleY(1.1) rotate(1deg); opacity: 1; }
+  }
+
+  .candle-body {
+    width: 10px;
+    height: 32px;
+    background: linear-gradient(180deg, #e8d5a8, #c9a96e);
+    border-radius: 1px;
+  }
+
+  .loading-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: rgba(250,246,239,0.6);
+    line-height: 1.6;
+  }
+
+  .loading-sub {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.5;
+    margin-top: 12px;
+  }
+
+  /* Result */
+  .result-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .identity-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(28px, 6vw, 42px);
+    line-height: 1.2;
+    color: var(--gold-light);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .result-section {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-section:last-of-type { border-bottom: none; }
+
+  .result-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--dusty-rose);
+    opacity: 0.8;
+    margin-bottom: 10px;
+  }
+
+  .result-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.75;
+    color: rgba(250,246,239,0.82);
+  }
+
+  .result-text strong {
+    color: var(--gold-light);
+    font-weight: 400;
+  }
+
+  .cta-box {
+    background: rgba(201,169,110,0.07);
+    border: 1px solid rgba(201,169,110,0.3);
+    border-radius: 2px;
+    padding: 24px;
+    text-align: center;
+    margin-top: 32px;
+  }
+
+  .cta-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    opacity: 0.7;
+  }
+
+  .cta-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: rgba(250,246,239,0.75);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .cta-link {
+    display: inline-block;
+    padding: 12px 32px;
+    border: 1px solid var(--dusty-rose);
+    color: rgba(242,228,220,0.9);
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 1px;
+    transition: all 0.25s;
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .cta-link:hover {
+    background: rgba(196,144,122,0.12);
+  }
+
+  .restart-btn {
+    display: block;
+    margin: 24px auto 0;
+    padding: 10px 24px;
+    background: transparent;
+    border: 1px solid rgba(250,246,239,0.12);
+    color: rgba(250,246,239,0.3);
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.25s;
+  }
+
+  .restart-btn:hover {
+    color: rgba(250,246,239,0.5);
+    border-color: rgba(250,246,239,0.2);
+  }
+
+  /* Error */
+  .error-text {
+    text-align: center;
+    color: rgba(250,246,239,0.5);
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    padding: 20px 0;
+  }
+
+  /* Transition */
+  .screen { animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 56px;
+    font-size: 11px;
+    color: rgba(250,246,239,0.2);
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="eyebrow">Quantum Queen &nbsp;·&nbsp; Carol Wilson</div>
+    <h1 class="main-title">The Identity<br><em>Mirror</em></h1>
+    <div class="gold-line"></div>
+    <p class="subtitle">A reflection tool to help you see the story<br>you've been living inside — and who you actually are.</p>
+  </div>
+
+  <div id="app-content"></div>
+
+  <div class="footer">quantumqueen.com &nbsp;·&nbsp; stop abandoning yourself</div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "When something good happens to you — a compliment, an unexpected gift, a moment of ease — what's your first inner reaction?",
+    opts: [
+      "I feel warm and take it in, even if briefly",
+      "I deflect or minimize it — I don't want to seem arrogant",
+      "I immediately wonder what it's going to cost me",
+      "I feel like I didn't deserve it, so I can't fully enjoy it"
+    ]
+  },
+  {
+    q: "When you imagine having everything you want — real abundance, love, freedom — what thought follows almost immediately?",
+    opts: [
+      "\"I'm on my way there. It's possible.\"",
+      "\"That's for other people, not really for me\"",
+      "\"I'd have to completely change who I am\"",
+      "\"Something would go wrong. It always does.\""
+    ]
+  },
+  {
+    q: "How do you typically feel after saying yes to something you didn't actually want to do?",
+    opts: [
+      "Resentful — but I hide it",
+      "Fine. Making others happy makes me happy",
+      "Exhausted and like I've disappeared a little",
+      "Guilty if I don't, so I almost always say yes"
+    ]
+  },
+  {
+    q: "If someone asked you right now, \"What do you need?\", your honest first reaction would be:",
+    opts: [
+      "I'd feel uncomfortable. Needs feel selfish.",
+      "I genuinely don't know. I've lost track.",
+      "I'd name something but then immediately downplay it",
+      "I'd think of everyone else's needs first"
+    ]
+  },
+  {
+    q: "The story you most often tell yourself about money is:",
+    opts: [
+      "It's hard to come by and easy to lose",
+      "People like me don't have a lot of it",
+      "I have to work myself to the bone to earn it",
+      "I'm getting better with it — I'm claiming a new story"
+    ]
+  },
+  {
+    q: "When you think about your younger self — the child version of you — what do you most want to say to her?",
+    opts: [
+      "\"You didn't have to carry all of that alone\"",
+      "\"You were enough. You were always enough.\"",
+      "\"Those beliefs they gave you were never yours\"",
+      "\"I see you. And I'm coming back for you.\""
+    ]
+  },
+  {
+    q: "Right now, in this season of your life, you would describe yourself as someone who is:",
+    opts: [
+      "Waking up — starting to question everything",
+      "In the middle of a real transformation, even when it's hard",
+      "Becoming her. I can feel it.",
+      "Still stuck in the old story more than I want to admit"
+    ]
+  }
+];
+
+let current = 0;
+let answers = [];
+let resultData = null;
+
+function render(html) {
+  document.getElementById('app-content').innerHTML = html;
+}
+
+function showIntro() {
+  render(`
+    <div class="screen card">
+      <p class="intro-text">
+        This isn't a personality quiz.<br><br>
+        It's a <em>mirror</em>.<br><br>
+        Seven questions. Honest answers.<br>
+        A reflection of the identity you've been living inside —<br>
+        and a glimpse of who you're becoming.
+      </p>
+      <div class="gold-line"></div>
+      <p style="text-align:center;font-size:13px;color:rgba(250,246,239,0.4);margin-bottom:28px;letter-spacing:0.04em;line-height:1.7;">There are no wrong answers.<br>Just your truth, right now.</p>
+      <button class="start-btn" onclick="startQuiz()">Begin the reflection</button>
+    </div>
+  `);
+}
+
+function showQuestion() {
+  const q = QUESTIONS[current];
+  const pct = Math.round((current / QUESTIONS.length) * 100);
+  const selected = answers[current];
+
+  render(`
+    <div class="screen">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span class="progress-label">Your reflection</span>
+          <span class="progress-count">${current + 1} of ${QUESTIONS.length}</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="card">
+        <div class="question-num">Question ${current + 1}</div>
+        <div class="question-text">${q.q}</div>
+        <div class="options">
+          ${q.opts.map((opt, i) => `
+            <button class="option${selected === i ? ' selected' : ''}" onclick="selectAnswer(${i})">${opt}</button>
+          `).join('')}
+        </div>
+        <div class="nav">
+          ${current > 0 ? `<button class="nav-btn btn-back" onclick="goBack()">Back</button>` : '<span></span>'}
+          <button class="nav-btn btn-next" onclick="goNext()" ${selected === undefined ? 'disabled' : ''}>
+            ${current < QUESTIONS.length - 1 ? 'Continue' : 'See my reflection'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function selectAnswer(i) {
+  answers[current] = i;
+  showQuestion();
+}
+
+function goBack() {
+  current--;
+  showQuestion();
+}
+
+function goNext() {
+  if (answers[current] === undefined) return;
+  if (current < QUESTIONS.length - 1) {
+    current++;
+    showQuestion();
+  } else {
+    showLoading();
+    analyzeWithAI();
+  }
+}
+
+function startQuiz() {
+  current = 0;
+  answers = [];
+  showQuestion();
+}
+
+function showLoading() {
+  render(`
+    <div class="screen card loading">
+      <div class="candle-wrap">
+        <div class="candle"><div class="flame"></div><div class="candle-body"></div></div>
+        <div class="candle"><div class="flame"></div><div class="candle-body"></div></div>
+        <div class="candle"><div class="flame"></div><div class="candle-body"></div></div>
+      </div>
+      <div class="loading-text">Reading your reflection...</div>
+      <div class="loading-sub">This will just take a moment</div>
+    </div>
+  `);
+}
+
+async function analyzeWithAI() {
+  const qaPairs = QUESTIONS.map((q, i) => ({
+    question: q.q,
+    answer: q.opts[answers[i]] || 'No answer'
+  }));
+
+  const prompt = `You are a compassionate identity coach and consciousness guide working with Carol Wilson's Quantum Queen community. Carol's work centers on self-abandonment recovery, people-pleasing patterns, nervous system healing, receiving, manifestation through identity, and Neville Goddard's teachings.
+
+A subscriber has just completed a 7-question identity reflection quiz. Based on their answers, provide a deeply personal, warm, and honest identity reflection. DO NOT be generic. Look at the specific pattern in their answers.
+
+Their answers:
+${qaPairs.map((qa, i) => `Q${i+1}: "${qa.question}"\nA: "${qa.answer}"`).join('\n\n')}
+
+Respond ONLY with a valid JSON object (no markdown, no backticks) with exactly these fields:
+{
+  "identity_name": "A poetic 3-5 word name for the current identity pattern they're living from (e.g. 'The Woman Who Waits', 'The Fierce Protector', 'The One Who Over-Gives')",
+  "what_i_see": "2-3 sentences. Deeply honest and compassionate reflection of the specific pattern visible in their answers. Name what you actually see without sugarcoating, but with love. Reference specific things from their answers.",
+  "where_it_came_from": "2-3 sentences. Where this identity likely came from — childhood programming, inherited beliefs, ancestral patterns. Help them see it wasn't their fault, but it has been their responsibility. Make it feel like a revelation, not a diagnosis.",
+  "what_its_costing_you": "2-3 sentences. What staying in this story is costing them — in joy, receiving, love, abundance, freedom. Be specific and real.",
+  "who_you_actually_are": "3-4 sentences. The truth of who they are underneath the programming. This should feel like someone finally seeing them fully. Use language of worthiness, power, and becoming. This is the most important section — make it land.",
+  "your_next_step": "1-2 sentences. One specific, grounded action or awareness to carry this week. Not overwhelming — just the next step.",
+  "carol_message": "1-2 sentences from Carol personally — something like 'I know this pattern intimately because I lived it.' Warm, real, human. Reference that Carol has a self-hypnosis session or video specifically for this pattern."
+}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content.map(b => b.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    resultData = JSON.parse(clean);
+    showResult();
+  } catch (err) {
+    render(`
+      <div class="screen card">
+        <div class="error-text">Something stirred in the space between us — but the connection dropped.<br><br>Please try again in a moment.</div>
+        <button class="restart-btn" onclick="showLoading(); analyzeWithAI()">Try again</button>
+        <button class="restart-btn" onclick="startQuiz()">Start over</button>
+      </div>
+    `);
+  }
+}
+
+function showResult() {
+  if (!resultData) return;
+  const r = resultData;
+
+  render(`
+    <div class="screen">
+      <div class="card" style="margin-bottom:16px;">
+        <div class="result-eyebrow">Your current identity pattern</div>
+        <div class="identity-label">${r.identity_name}</div>
+        <div class="gold-line"></div>
+
+        <div class="result-section">
+          <div class="result-label">What I see in you</div>
+          <div class="result-text">${r.what_i_see}</div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-label">Where this came from</div>
+          <div class="result-text">${r.where_it_came_from}</div>
+        </div>
+
+        <div class="result-section">
+          <div class="result-label">What it's costing you</div>
+          <div class="result-text">${r.what_its_costing_you}</div>
+        </div>
+
+        <div class="result-section" style="border-bottom:none;background:rgba(201,169,110,0.04);margin:-1px;padding:24px;border-radius:2px;">
+          <div class="result-label" style="color:var(--gold);">Who you actually are</div>
+          <div class="result-text" style="color:rgba(250,246,239,0.92);font-size:19px;">${r.who_you_actually_are}</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="result-section" style="border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:20px;">
+          <div class="result-label">Your next step this week</div>
+          <div class="result-text">${r.your_next_step}</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:36px;height:36px;border-radius:50%;border:1px solid var(--gold);opacity:0.6;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="1"/></svg>
+          </div>
+          <div class="result-text" style="font-size:15px;color:rgba(250,246,239,0.65);">${r.carol_message}</div>
+        </div>
+      </div>
+
+      <div class="cta-box">
+        <div class="cta-label">Your next step with Carol</div>
+        <div class="cta-text">Watch the video that speaks directly to your pattern — and let yourself receive what's already yours.</div>
+        <a class="cta-link" href="https://youtube.com/@CarolleeWilson" target="_blank">Visit the Quantum Queen channel →</a>
+      </div>
+
+      <button class="restart-btn" onclick="startQuiz()">Take the reflection again</button>
+    </div>
+  `);
+}
+
+showIntro();
+</script>
+</body>
+</html>
